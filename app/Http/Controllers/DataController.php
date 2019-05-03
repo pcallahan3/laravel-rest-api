@@ -19,15 +19,7 @@ class DataController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -68,16 +60,7 @@ class DataController extends Controller
         return response()->json($data);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -88,7 +71,23 @@ class DataController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+      $validator = Validator::make($request->all(), [
+        'text' => 'required'
+      ]);
+
+      if($validator->fails()){
+         $response = array('response' => $validator->messages(), 'success' => false);
+         return $response;
+      }
+      else{
+        //Find data in DB
+        $data = Data::find($id);
+        $data->text = $request->input('text');
+        $data->body = $request->input('body');
+        $data->save();
+
+        return response()->json($item);
+      }
     }
 
     /**
@@ -99,6 +98,10 @@ class DataController extends Controller
      */
     public function destroy($id)
     {
-        //
+      //Find data in DB
+      $data = Data::find($id);
+      $data->delete();
+      $response = array('response' => 'Data deleted', 'success' => true);
+      return $response;
     }
 }
