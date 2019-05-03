@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Data;
+use Validator;
 
 class DataController extends Controller
 {
@@ -36,7 +37,23 @@ class DataController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       $validator = Validator::make($request->all(), [
+         'text' => 'required'
+       ]);
+
+       if($validator->fails()){
+          $response = array('response' => $validator->messages(), 'success' => false);
+          return $response;
+       }
+       else{
+         //Insert data into debug
+         $data = new Data;
+         $data->text = $request->input('text');
+         $data->body = $request->input('body');
+         $data->save();
+
+         return response()->json($item);
+       }
     }
 
     /**
@@ -47,7 +64,8 @@ class DataController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Data::find($id);
+        return response()->json($data);
     }
 
     /**
